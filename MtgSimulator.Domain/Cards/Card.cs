@@ -12,6 +12,7 @@ namespace MtgSimulator.Domain.Cards
         protected Card(string name)
         {
             Name = name;
+            CardZone = NonLibraryCardZone.Library;
         }
 
         public abstract int Cmc();
@@ -19,11 +20,22 @@ namespace MtgSimulator.Domain.Cards
         public abstract IEnumerable<ManaSymbol> Colors();
 
         public abstract void PlayCard();
+
+        public virtual void OnDraw()
+        {
+            CardZone = NonLibraryCardZone.Hand;
+        }
+
+        public virtual void OnGraveyardHit()
+        {
+            CardZone = NonLibraryCardZone.Graveyard;
+        }
     }
 
     public enum NonLibraryCardZone
     {
-        Hand,
+        Library = 0,
+        Hand = 1,
         Stack,
         Battlefield,
         Graveyard,

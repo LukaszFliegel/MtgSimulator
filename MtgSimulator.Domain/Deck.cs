@@ -18,6 +18,7 @@ namespace MtgSimulator.Domain
         public Deck(ICardFactory cardFactory)
         {
             _cardFactory = cardFactory;
+            Cards = new List<Card>();
         }
 
         public void LoadFromCsv(string deckCsvFilePath)
@@ -30,9 +31,7 @@ namespace MtgSimulator.Domain
                     var values = readLine.Split(';');
 
                     var numberOfCardsInDeck = int.Parse(values[0]);
-                    var cardName = values[1];                    
-                    var manaCost = values[4];
-                    var cardType = values[5];
+                    var cardName = values[1];
                     
                     for (int i = 0; i < numberOfCardsInDeck; i++)
                     {

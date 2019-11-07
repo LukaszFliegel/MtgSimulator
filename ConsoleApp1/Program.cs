@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MtgSimulator.Cards;
+using MtgSimulator.Domain.GameManager;
+using System;
 
 namespace MtgSimulator
 {
@@ -6,7 +8,16 @@ namespace MtgSimulator
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            BoardManager boardManager = new BoardManager("..\\..\\..\\..\\Decklists\\SultaiFood.csv", new CardFactory());
+
+            boardManager.InitializeBoardManager();
+
+            Console.WriteLine("Drawn cards:");
+            foreach (var cardInHand in boardManager.PlayerGameState.HandZone.Cards)
+            {
+                Console.WriteLine(cardInHand.Name);
+            }
+            
         }
     }
 }
