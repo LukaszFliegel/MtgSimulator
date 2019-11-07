@@ -1,0 +1,21 @@
+﻿Amount;Name;Expansion;Collectors number;ManaCost;CardType
+4;Gilded Goose;(ELD);160;G;Creature
+4;Hydroid Krasis;(RNA);183;XUG;Creature
+1;Massacre Girl;(WAR);99;3BB;Creature
+4;Paradise Druid;(WAR);171;1G;Creature
+4;Wicked Wolf;(ELD);181;2GG;Creature
+1;Liliana, Dreadhorde General;(WAR);97;4BB;Planeswalker
+4;Nissa, Who Shakes the World;(WAR);169;3GG;Planeswalker
+4;Oko, Thief of Crowns;(ELD);197;1UG;Planeswalker
+3;Vraska, Golgari Queen;(GRN);213;2BG;Planeswalker
+1;Legion's End;(M20);106;1B;Sorcery
+3;Noxious Grasp;(M20);110;1B;Instant
+3;Once Upon a Time;(ELD);169;1G;Instant
+4;Breeding Pool;(RNA);246;;Land
+2;Fabled Passage;(ELD);244;;Land
+6;Forest;(ELD);266;;Land
+1;Island;(ELD);254;;Land
+4;Overgrown Tomb;(GRN);253;;Land
+2;Swamp;(ELD);258;;Land
+1;Temple of Malady;(M20);254;;Land
+4;Watery Grave;(GRN);259;;Land
