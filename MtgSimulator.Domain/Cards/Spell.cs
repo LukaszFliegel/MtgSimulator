@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MtgSimulator.Domain.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MtgSimulator.Domain.Cards
 {
@@ -6,14 +8,14 @@ namespace MtgSimulator.Domain.Cards
     {
         private SpellCost Cost { get; set; }
 
-        protected Spell(string name, int colorlessManaAmount, IList<ManaSymbol> colorManaSymbols) : base(name)
+        protected Spell(string name, int usesVariantAmountCost, IList<ManaSymbol> colorManaSymbols) : base(name)
         {
-            Cost = new SpellCost(colorlessManaAmount, colorManaSymbols);
+            Cost = new SpellCost(usesVariantAmountCost, colorManaSymbols);
         }
 
-        protected Spell(string name, bool usesVariantAmount, IList<ManaSymbol> colorManaSymbols) : base(name)
+        protected Spell(string name, bool usesVariantAmountCost, IList<ManaSymbol> colorManaSymbols) : base(name)
         {
-            Cost = new SpellCost(usesVariantAmount, colorManaSymbols);
+            Cost = new SpellCost(usesVariantAmountCost, colorManaSymbols);
         }
 
         public override int Cmc()
@@ -38,7 +40,18 @@ namespace MtgSimulator.Domain.Cards
 
         public override void PlayCard()
         {
-            throw new System.NotImplementedException();
+            CardZone = CardZone.Stack;
+        }
+
+        public bool IsCastable(AvailableMana availableMana)
+        {
+            if(Cmc() <= availableMana.TotalAmountOfMana)
+            {
+                if (availableMana.AvailableManaSymbols.Any(manaCombination => manaCombination.ContainsAll(Cost.ColorManaSymbols)))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

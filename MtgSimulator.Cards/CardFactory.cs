@@ -17,6 +17,16 @@ namespace MtgSimulator.Cards
             return (Card)Activator.CreateInstance(CardNamesMap[name]);
         }
 
+        public Spell InstantiateSpell(string name)
+        {
+            return (Spell)Activator.CreateInstance(CardNamesMap[name]);
+        }
+
+        public Creature InstantiateCreature(string name)
+        {
+            return (Creature)Activator.CreateInstance(CardNamesMap[name]);
+        }
+
         private Dictionary<string, Type> CardNamesMap = new Dictionary<string, Type>()
         {
             { "Gilded Goose", typeof(GildedGooseCard) },

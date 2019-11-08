@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MtgSimulator.Domain.Cards.Interfaces;
+using System.Collections.Generic;
 
 namespace MtgSimulator.Domain.Cards
 {
@@ -40,7 +41,12 @@ namespace MtgSimulator.Domain.Cards
 
         public override void PlayCard()
         {
-            throw new System.NotImplementedException();
+            // played land are going straight onto the battlefield, nothing to do when they are played
+        }
+
+        public virtual void OnEntersTheBattlefield()
+        {
+            CardZone = CardZone.Battlefield;
         }
     }
 }

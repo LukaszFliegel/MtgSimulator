@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MtgSimulator.Domain.Cards.Interfaces;
+using System.Collections.Generic;
 
 namespace MtgSimulator.Domain.Cards
 {
@@ -12,6 +13,11 @@ namespace MtgSimulator.Domain.Cards
             : base(name, colorlessManaAmount, colorManaSymbols)
         {
             LoyalityCounters = loyalityCounters;
+        }
+
+        public virtual void OnEntersTheBattlefield()
+        {
+            CardZone = CardZone.Battlefield;
         }
     }
 }

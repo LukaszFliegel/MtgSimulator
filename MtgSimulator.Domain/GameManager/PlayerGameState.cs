@@ -11,7 +11,9 @@ namespace MtgSimulator.Domain.GameManager
         private readonly ICardFactory _cardFactory;
 
         public HandZone HandZone { get; private set; }
-        public GraveyardZone _graveyardZone { get; private set; }
+        public GraveyardZone GraveyardZone { get; private set; }
+
+        public BattlefieldZone BattlefieldZone { get; private set; }
 
         public Deck Deck { get; private set; }
 
@@ -23,8 +25,8 @@ namespace MtgSimulator.Domain.GameManager
             _cardFactory = cardFactory;
 
             HandZone = new HandZone();
-            _graveyardZone = new GraveyardZone();
-            
+            GraveyardZone = new GraveyardZone();
+            BattlefieldZone = new BattlefieldZone();
         }
 
         public void InitializeGameState()
@@ -34,7 +36,8 @@ namespace MtgSimulator.Domain.GameManager
             Deck.Shuffle();
 
             HandZone.ClearHand();
-            _graveyardZone.ClearGraveyard();
+            GraveyardZone.ClearGraveyard();
+            BattlefieldZone.ClearBattlefield();
 
             TurnCounter = 1;
 
@@ -54,6 +57,12 @@ namespace MtgSimulator.Domain.GameManager
             {
                 DrawCardFromDeck();
             }
+        }
+
+        public AvailableMana AvailableMana()
+        {
+            // todo
+            return new AvailableMana();
         }
     }
 }

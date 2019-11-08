@@ -17,7 +17,6 @@ namespace MtgSimulator
             {
                 Console.WriteLine(cardInHand.Name);
             }
-            
         }
     }
 }

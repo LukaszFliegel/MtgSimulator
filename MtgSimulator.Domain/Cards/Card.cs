@@ -7,12 +7,12 @@ namespace MtgSimulator.Domain.Cards
     {
         public string Name { get; protected set; }
 
-        public NonLibraryCardZone CardZone { get; protected set; }
+        public CardZone CardZone { get; protected set; }
 
         protected Card(string name)
         {
             Name = name;
-            CardZone = NonLibraryCardZone.Library;
+            CardZone = CardZone.Library;
         }
 
         public abstract int Cmc();
@@ -23,16 +23,16 @@ namespace MtgSimulator.Domain.Cards
 
         public virtual void OnDraw()
         {
-            CardZone = NonLibraryCardZone.Hand;
+            CardZone = CardZone.Hand;
         }
 
         public virtual void OnGraveyardHit()
         {
-            CardZone = NonLibraryCardZone.Graveyard;
+            CardZone = CardZone.Graveyard;
         }
     }
 
-    public enum NonLibraryCardZone
+    public enum CardZone
     {
         Library = 0,
         Hand = 1,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -28,6 +29,14 @@ namespace MtgSimulator.Domain.Extensions
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+    }
+
+    static class EnumarableExtensions
+    {
+        public static bool ContainsAll<T>(this IEnumerable<T> containingList, IEnumerable<T> lookupList)
+        {
+            return !lookupList.Except(containingList).Any();
         }
     }
 }
