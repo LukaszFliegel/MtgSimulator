@@ -1,4 +1,5 @@
 ﻿using MtgSimulator.Domain.Cards.Interfaces;
+using MtgSimulator.Domain.GameManager;
 using System.Collections.Generic;
 
 namespace MtgSimulator.Domain.Cards
@@ -9,8 +10,8 @@ namespace MtgSimulator.Domain.Cards
 
         public bool Tapped => false;
 
-        protected Planeswalker(string name, int loyalityCounters, int colorlessManaAmount, params ManaSymbol[] colorManaSymbols) 
-            : base(name, colorlessManaAmount, colorManaSymbols)
+        protected Planeswalker(string name, PlayerGameState playerGameState, int loyalityCounters, int colorlessManaAmount, params ManaSymbol[] colorManaSymbols) 
+            : base(name, playerGameState, colorlessManaAmount, colorManaSymbols)
         {
             LoyalityCounters = loyalityCounters;
         }

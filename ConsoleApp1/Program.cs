@@ -8,14 +8,23 @@ namespace MtgSimulator
     {
         static void Main(string[] args)
         {
-            BoardManager boardManager = new BoardManager("..\\..\\..\\..\\Decklists\\SultaiFood.csv", new CardFactory());
+            var csvDecklistFilePath = "..\\..\\..\\..\\Decklists\\SultaiFood.csv";
+            var boardManager = new BoardManager(new CardFactory());
 
-            boardManager.InitializeBoardManager();
+            var playerSimulator = new PlayerSimulator(boardManager.PlayerGameState);
+
+            boardManager.InitializeBoardManager(csvDecklistFilePath);
 
             Console.WriteLine("Drawn cards:");
             foreach (var cardInHand in boardManager.PlayerGameState.HandZone.Cards)
             {
                 Console.WriteLine(cardInHand.Name);
+            }
+
+            // simulate first 10 turns
+            for (int i = 0; i < 10; i++)
+            {
+                playerSimulator.SimulateTurn();
             }
         }
     }

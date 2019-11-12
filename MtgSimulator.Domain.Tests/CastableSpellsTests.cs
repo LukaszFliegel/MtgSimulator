@@ -1,7 +1,9 @@
 using FluentAssertions;
+using Moq;
 using MtgSimulator.Cards;
 using MtgSimulator.Cards.Creatures;
 using MtgSimulator.Domain.Cards;
+using MtgSimulator.Domain.GameManager;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -13,8 +15,6 @@ namespace MtgSimulator.Domain.Tests
         public void Setup()
         {
         }
-
-        //private (int, ManaSymbol[]) _sourceLists = (4, { ManaSymbol.Green, ManaSymbol.Green, ManaSymbol.Blue, ManaSymbol.Blue });
 
         [TestCase("Wicked Wolf", 4, ManaSymbol.Green, ManaSymbol.Green)]
         [TestCase("Wicked Wolf", 4, ManaSymbol.Green, ManaSymbol.Green)]
@@ -32,7 +32,8 @@ namespace MtgSimulator.Domain.Tests
         {
             // arrange
             var cardFactory = new CardFactory();
-            var card = cardFactory.InstantiateSpell(spellCardName);
+            var playerGameState = new PlayerGameState(cardFactory);
+            var card = cardFactory.InstantiateSpell(spellCardName, playerGameState);
             var availableMana = new AvailableMana();
 
             availableMana.TotalAmountOfMana = totalAmountOfMana;
@@ -46,7 +47,7 @@ namespace MtgSimulator.Domain.Tests
         [TestCase("Wicked Wolf", 2, ManaSymbol.Green, ManaSymbol.Green)]
         [TestCase("Wicked Wolf", 3, ManaSymbol.Green, ManaSymbol.Green)]
         [TestCase("Wicked Wolf", 4, ManaSymbol.Blue, ManaSymbol.Blue)]
-        [TestCase("Wicked Wolf", 8, ManaSymbol.Blue, ManaSymbol.Blue, ManaSymbol.Red, ManaSymbol.Red, ManaSymbol.Black, ManaSymbol.Black, ManaSymbol.White, ManaSymbol.White)] 
+        [TestCase("Wicked Wolf", 8, ManaSymbol.Blue, ManaSymbol.Blue, ManaSymbol.Red, ManaSymbol.Red, ManaSymbol.Black, ManaSymbol.Black, ManaSymbol.White, ManaSymbol.White)]
         [TestCase("Wicked Wolf", 100, ManaSymbol.White, ManaSymbol.White, ManaSymbol.White, ManaSymbol.White)]
 
         [TestCase("Paradise Druid", 2, ManaSymbol.White)]
@@ -55,12 +56,12 @@ namespace MtgSimulator.Domain.Tests
         [TestCase("Paradise Druid", 2, ManaSymbol.Red)]
         [TestCase("Paradise Druid", 1, ManaSymbol.Green)]
         [TestCase("Paradise Druid", 4, ManaSymbol.White, ManaSymbol.Blue, ManaSymbol.Black, ManaSymbol.Red)]
-
         public void CreatureIsNotCastable(string spellCardName, int totalAmountOfMana, params ManaSymbol[] manaSymbols)
         {
             // arrange
             var cardFactory = new CardFactory();
-            var card = cardFactory.InstantiateSpell(spellCardName);
+            var playerGameState = new PlayerGameState(cardFactory);            
+            var card = cardFactory.InstantiateSpell(spellCardName, playerGameState);
             var availableMana = new AvailableMana();
 
             availableMana.TotalAmountOfMana = totalAmountOfMana;

@@ -1,6 +1,7 @@
 ﻿using MtgSimulator.Cards;
 using MtgSimulator.Domain.Cards;
 using MtgSimulator.Domain.Extensions;
+using MtgSimulator.Domain.GameManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +22,7 @@ namespace MtgSimulator.Domain
             Cards = new List<Card>();
         }
 
-        public void LoadFromCsv(string deckCsvFilePath)
+        public void LoadFromCsv(string deckCsvFilePath, PlayerGameState playerGameState)
         {
             using(var streamReader = new StreamReader(deckCsvFilePath))
             {
@@ -35,9 +36,17 @@ namespace MtgSimulator.Domain
                     
                     for (int i = 0; i < numberOfCardsInDeck; i++)
                     {
-                        Cards.Add(_cardFactory.InstantiateCard(cardName));
+                        Cards.Add(_cardFactory.InstantiateCard(cardName, playerGameState));
                     }
                 }
+            }
+        }
+
+        public void LoadCardByNames(IEnumerable<string> cardNames, PlayerGameState playerGameState)
+        {
+            foreach (var cardName in cardNames)
+            {
+                Cards.Add(_cardFactory.InstantiateCard(cardName, playerGameState));
             }
         }
 

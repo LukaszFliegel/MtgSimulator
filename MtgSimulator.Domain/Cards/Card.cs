@@ -1,25 +1,29 @@
-﻿using System;
+﻿using MtgSimulator.Domain.GameManager;
+using System;
 using System.Collections.Generic;
 
 namespace MtgSimulator.Domain.Cards
 {
     public abstract class Card
     {
+        protected readonly PlayerGameState PlayerGameState;
+
         public string Name { get; protected set; }
 
         public CardZone CardZone { get; protected set; }
 
-        protected Card(string name)
+        protected Card(string name, PlayerGameState playerGameState)
         {
             Name = name;
+            PlayerGameState = playerGameState;
             CardZone = CardZone.Library;
         }
 
-        public abstract int Cmc();
+        public abstract int Cmc { get; }
 
         public abstract IEnumerable<ManaSymbol> Colors();
 
-        public abstract void PlayCard();
+        //public abstract void PlayCard();
 
         public virtual void OnDraw()
         {

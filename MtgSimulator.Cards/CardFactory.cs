@@ -4,6 +4,7 @@ using MtgSimulator.Cards.Lands;
 using MtgSimulator.Cards.Planeswalkers;
 using MtgSimulator.Cards.Sorceries;
 using MtgSimulator.Domain.Cards;
+using MtgSimulator.Domain.GameManager;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,19 +13,19 @@ namespace MtgSimulator.Cards
 {
     public class CardFactory : ICardFactory
     {
-        public Card InstantiateCard(string name)
+        public Card InstantiateCard(string name, PlayerGameState playerGameState)
         {
-            return (Card)Activator.CreateInstance(CardNamesMap[name]);
+            return (Card)Activator.CreateInstance(CardNamesMap[name], playerGameState);
         }
 
-        public Spell InstantiateSpell(string name)
+        public Spell InstantiateSpell(string name, PlayerGameState playerGameState)
         {
-            return (Spell)Activator.CreateInstance(CardNamesMap[name]);
+            return (Spell)Activator.CreateInstance(CardNamesMap[name], playerGameState);
         }
 
-        public Creature InstantiateCreature(string name)
+        public Creature InstantiateCreature(string name, PlayerGameState playerGameState)
         {
-            return (Creature)Activator.CreateInstance(CardNamesMap[name]);
+            return (Creature)Activator.CreateInstance(CardNamesMap[name], playerGameState);
         }
 
         private Dictionary<string, Type> CardNamesMap = new Dictionary<string, Type>()

@@ -6,14 +6,14 @@ namespace MtgSimulator.Domain.GameManager
     {
         public PlayerGameState PlayerGameState;
 
-        public BoardManager(string deckCsvFilePath, ICardFactory cardFactory)
+        public BoardManager(ICardFactory cardFactory)
         {
-            PlayerGameState = new PlayerGameState(deckCsvFilePath, cardFactory);
+            PlayerGameState = new PlayerGameState(cardFactory);
         }
 
-        public void InitializeBoardManager()
+        public void InitializeBoardManager(string deckCsvFilePath)
         {
-            PlayerGameState.InitializeGameState();
+            PlayerGameState.InitializeGameState(deckCsvFilePath);
         }
     }
 }

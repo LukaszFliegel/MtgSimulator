@@ -4,10 +4,11 @@ namespace MtgSimulator.Domain
 {
     public class SpellCost
     {
-        public int ColorlessManaAmount { get; set; }
+        public int ColorlessManaAmount { get; }
 
-        public IList<ManaSymbol> ColorManaSymbols { get; set; }
+        public IList<ManaSymbol> ColorManaSymbols { get; }
         public bool UsesVariantAmount { get; }
+        public int MinimumValueForVariantMana { get; }
 
         public SpellCost(int colorlessManaAmount, IList<ManaSymbol> colorManaSymbols)
         {
@@ -24,9 +25,10 @@ namespace MtgSimulator.Domain
         }
 
         // TTA: how to represent variable amount of colorless mana?
-        public SpellCost(bool usesVariantAmount, IList<ManaSymbol> colorManaSymbols)
+        public SpellCost(bool usesVariantAmount, int minimumValueForVariantMana, IList<ManaSymbol> colorManaSymbols)
         {
             UsesVariantAmount = usesVariantAmount;
+            MinimumValueForVariantMana = minimumValueForVariantMana;
             ColorlessManaAmount = 0;
             ColorManaSymbols = colorManaSymbols;
         }

@@ -1,10 +1,9 @@
-﻿using MtgSimulator.Domain.Cards;
+﻿using MtgSimulator.Domain;
+using MtgSimulator.Domain.Cards;
 using MtgSimulator.Domain.Cards.Interfaces;
 using MtgSimulator.Domain.GameManager;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MtgSimulator
 {
@@ -44,23 +43,74 @@ namespace MtgSimulator
 
         protected void Draw()
         {
+            Console.WriteLine("Drawing a card");
             _playerGameState.Deck.DrawCard();
         }
 
         protected void FirstMainPhase()
         {
-            //foreach (var card in _playerGameState.HandZone.Cards)
-            //{
-            //    if(card is Land)
-            //    {
-            //        var land = card as Land;
-            //    }
-            //}
-
-            _playerGameState.HandZone.Cards
+            // play a land for the turn
+            // TODO: pick land that will make more of you hand cads playable
+            var land = _playerGameState.HandZone.Cards
                 .Where(card => card is Land)
-                .FirstOrDefault()
-                .PlayCard();
+                .Select(card => card as Land)
+                .FirstOrDefault();
+
+            Console.WriteLine($" ### Playing {land.Name}");
+            land.PlayLand();
+
+            Spell candidateSpell;
+            do
+            {
+                var availableMana = _playerGameState.AvailableMana();
+                Console.WriteLine($"Available mana: {availableMana.ToString()}");
+
+                candidateSpell = FindSpellToCastGivenAvailableMana(availableMana);
+                if (candidateSpell != null)
+                {
+                    Console.WriteLine($" === Casrting {candidateSpell.Name}");
+                    candidateSpell.Cast(availableMana);
+                }
+            }
+            while (candidateSpell != null);
+        }
+
+        private Spell FindSpellToCastGivenAvailableMana(AvailableMana availableMana)
+        {
+            Spell candidateSpell = FindNonVariantManaSpell(availableMana);
+
+            // if we didn't find any castable spell try to find X mana spell
+            if (candidateSpell == null)
+            {
+                candidateSpell = FindVariantManaSpell(availableMana);
+            }
+
+            return candidateSpell;
+        }
+
+        private Spell FindNonVariantManaSpell(AvailableMana availableMana)
+        {
+            // select the higest CMC playable spell (omit all X mana spells)
+            return _playerGameState.HandZone.Cards
+                .Where(card => card is Spell)
+                .Select(card => card as Spell)
+                .Where(spell => spell.IsCastable(availableMana))
+                .Where(spell => !spell.Cost.UsesVariantAmount) // omit X mana spells
+                .OrderByDescending(spell => spell.Cmc) // take highest CMC spell
+                .FirstOrDefault();
+        }
+
+        private Spell FindVariantManaSpell(AvailableMana availableMana)
+        {
+            // select the lowest CMC X mana spell (considering minimum value for variant mana spell - i.e. do not take Hydroid Krasis to cast it for x=1)
+            return _playerGameState.HandZone.Cards
+                .Where(card => card is Spell)
+                .Select(card => card as Spell)
+                .Where(spell => spell.IsCastable(availableMana))
+                .Where(spell => spell.Cost.UsesVariantAmount) // only X mana spells
+                .Where(spell => spell.Cost.MinimumValueForVariantMana + spell.Cmc <= availableMana.TotalAmountOfMana) // take only spells that are worth casting (ex. Hydroid Krasis for x=1 is not worth casting)
+                .OrderBy(spell => spell.Cmc) // take the spell with lowest CMC (i.e. preferr to cast Hydroid Krasis before Mass Manipulation)
+                .FirstOrDefault();
         }
 
         protected void Combat()
@@ -75,7 +125,8 @@ namespace MtgSimulator
 
         protected void EndStep()
         {
-
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }
