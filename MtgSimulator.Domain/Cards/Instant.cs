@@ -9,5 +9,17 @@ namespace MtgSimulator.Domain.Cards
             : base(name, playerGameState, colorlessManaAmount, colorManaSymbols)
         {
         }
+
+        public virtual void OnResolve()
+        {
+            CardZone = CardZone.Graveyard;
+            PlayerGameState.GraveyardZone.Cards.Add(this);
+        }
+
+        public override void OnCast()
+        {
+            PlayerGameState.HandZone.Cards.Remove(this);
+            OnResolve();
+        }
     }
 }

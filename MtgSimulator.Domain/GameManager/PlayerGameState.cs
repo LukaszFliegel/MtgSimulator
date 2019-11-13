@@ -21,6 +21,8 @@ namespace MtgSimulator.Domain.GameManager
 
         public int TurnCounter { get; private set; }
 
+        private AvailableMana _availableMana = new AvailableMana();
+
         public PlayerGameState(ICardFactory cardFactory)
         {
             _cardFactory = cardFactory;
@@ -34,7 +36,7 @@ namespace MtgSimulator.Domain.GameManager
         {
             Deck = new Deck(_cardFactory);
             Deck.LoadFromCsv(deckCsvFilePath, this);
-            Deck.Shuffle();
+            //Deck.Shuffle();
 
             HandZone.ClearHand();
             GraveyardZone.ClearGraveyard();
@@ -75,53 +77,89 @@ namespace MtgSimulator.Domain.GameManager
             }
         }
 
-        public AvailableMana AvailableMana()
-        {
-            var avilableMana = new AvailableMana();
-
-            var landsCapableOfProducingMana = BattlefieldZone.Cards.Where(card => card is Land).Select(card => card as Land).Where(land => !land.Tapped).ToArray();
-
-            foreach (var land in landsCapableOfProducingMana)
+        public AvailableMana AvailableMana { 
+            get
             {
-                // assuming every land can produce only one mana
-                avilableMana.TotalAmountOfMana++;                
-            }
+                _availableMana.TotalAmountOfMana = 0;
+                _availableMana.EveryManaSymbolCombination.Clear();
 
-            var numberOfCombination = landsCapableOfProducingMana.SelectMany(p => p.GeneratesManaSymbols()).Count();
-            var manaCombinationIndex = new int[landsCapableOfProducingMana.Length];
-            for (int i = 0; i < manaCombinationIndex.Length; i++)
-            {
-                manaCombinationIndex[i] = 0;
-            }
+                var landsCapableOfProducingMana = BattlefieldZone.Cards
+                    .Where(card => card is Land)
+                    .Select(card => card as Land)
+                    .Where(land => !land.Tapped)
+                    .ToArray();
 
-            // calculate every combination of available mana
-            for (int k = 0; k < numberOfCombination; k++)
-            {
-                
-                // TODO: 
+                foreach (var land in landsCapableOfProducingMana)
+                {
+                    // assuming every land can produce only one mana
+                    _availableMana.TotalAmountOfMana++;
+                }
+
+                var numberOfCombination = landsCapableOfProducingMana.SelectMany(p => p.GeneratesManaSymbols()).Count();
+                var manaCombinationIndex = new int[landsCapableOfProducingMana.Length];
+
+                ResetTheIdexes(manaCombinationIndex);
+               
                 for (int i = 0; i < landsCapableOfProducingMana.Length; i++)
                 {
                     if (i > 0) manaCombinationIndex[i - 1] = 0;
 
-                    var availableManaSymbolsCombination = new List<ManaSymbol>();
-
                     for (int j = 0; j < landsCapableOfProducingMana[i].GeneratesManaSymbols().Length; j++)
                     {
-                        manaCombinationIndex[i] = j;
-                        availableManaSymbolsCombination.Add(landsCapableOfProducingMana[i].GeneratesManaSymbols()[j]);
+                        var availableManaSymbolsCombination = new List<ManaSymbol>();
+
+                        AddManaSymbolCombinationForFollowingLands(landsCapableOfProducingMana, manaCombinationIndex, i, j, availableManaSymbolsCombination);
+
+                        _availableMana.EveryManaSymbolCombination.Add(availableManaSymbolsCombination);
+                        availableManaSymbolsCombination.Clear();
+                        ResetTheIdexes(manaCombinationIndex);
+                        //manaCombinationIndex[i] = j;
                     }
                 }
+                return _availableMana;
             }
+        }
 
-            //foreach (var land in landsCapableOfProducingMana)
-            //{
-            //    foreach (var manaSymbol in land.GeneratesManaSymbols())
-            //    {
+        private void AddManaSymbolCombinationForFollowingLands(Land[] landsCapableOfProducingMana, int[] manaCombinationIndex, int startFromLandIndex, int startFromLandManaSymbolIndex, List<ManaSymbol> availableManaSymbolsCombination)
+        {
+            for (int k = startFromLandIndex; k < landsCapableOfProducingMana.Length; k++)
+            {
+                manaCombinationIndex[k] = startFromLandManaSymbolIndex;
 
-            //    }
-            //}
+                if (k != startFromLandIndex)
+                {
+                    for (int l = 0; l < landsCapableOfProducingMana[k].GeneratesManaSymbols().Length; l++)
+                    {
+                        //availableManaSymbolsCombination.Add(landsCapableOfProducingMana[k].GeneratesManaSymbols()[l]);
+                        manaCombinationIndex[k] = l;
 
-            return avilableMana;
+                        //AddManaCombination(landsCapableOfProducingMana, manaCombinationIndex, availableManaSymbolsCombination);
+
+                        availableManaSymbolsCombination.Add(landsCapableOfProducingMana[k].GeneratesManaSymbols()[l]);
+                    }
+                }
+                else
+                {
+                    //AddManaCombination(landsCapableOfProducingMana, manaCombinationIndex, availableManaSymbolsCombination);
+                    availableManaSymbolsCombination.Add(landsCapableOfProducingMana[k].GeneratesManaSymbols()[startFromLandManaSymbolIndex]);
+                }
+            }
+        }
+
+        private static void AddManaCombination(Land[] landsCapableOfProducingMana, int[] manaCombinationIndex, List<ManaSymbol> availableManaSymbolsCombination)
+        {
+            for (int m = 0; m < manaCombinationIndex.Length; m++)
+            {
+                availableManaSymbolsCombination.Add(landsCapableOfProducingMana[m].GeneratesManaSymbols()[manaCombinationIndex[m]]);
+            }
+        }
+
+        private static void ResetTheIdexes(int[] manaCombinationIndex)
+        {
+            for (int i = 0; i < manaCombinationIndex.Length; i++)
+            {
+                manaCombinationIndex[i] = 0;
+            }
         }
     }
 }

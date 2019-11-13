@@ -33,7 +33,10 @@ namespace MtgSimulator
             {
                 if (permanent is ITappable)
                     (permanent as ITappable).Untap();
-            }            
+            }
+
+            _playerGameState.AvailableMana.SpentManaSymbols.Clear();
+            _playerGameState.AvailableMana.TotalManaSpent = 0;
         }
 
         protected void Upkeep()
@@ -42,9 +45,11 @@ namespace MtgSimulator
         }
 
         protected void Draw()
-        {
-            Console.WriteLine("Drawing a card");
-            _playerGameState.Deck.DrawCard();
+        {            
+            var drawnCard = _playerGameState.Deck.DrawCard();
+            Console.WriteLine($"Drawn card {drawnCard.Name}");
+
+            _playerGameState.HandZone.AddCardToHand(drawnCard);
         }
 
         protected void FirstMainPhase()
@@ -62,14 +67,14 @@ namespace MtgSimulator
             Spell candidateSpell;
             do
             {
-                var availableMana = _playerGameState.AvailableMana();
-                Console.WriteLine($"Available mana: {availableMana.ToString()}");
+                //var availableMana = ;
+                Console.WriteLine($"Available mana: {_playerGameState.AvailableMana.ToString()}");
 
-                candidateSpell = FindSpellToCastGivenAvailableMana(availableMana);
+                candidateSpell = FindSpellToCastGivenAvailableMana(_playerGameState.AvailableMana);
                 if (candidateSpell != null)
                 {
-                    Console.WriteLine($" === Casrting {candidateSpell.Name}");
-                    candidateSpell.Cast(availableMana);
+                    Console.WriteLine($" === Casting {candidateSpell.Name}");
+                    candidateSpell.Cast(_playerGameState.AvailableMana);
                 }
             }
             while (candidateSpell != null);
@@ -91,13 +96,17 @@ namespace MtgSimulator
         private Spell FindNonVariantManaSpell(AvailableMana availableMana)
         {
             // select the higest CMC playable spell (omit all X mana spells)
-            return _playerGameState.HandZone.Cards
+            var spells = _playerGameState.HandZone.Cards
                 .Where(card => card is Spell)
                 .Select(card => card as Spell)
                 .Where(spell => spell.IsCastable(availableMana))
                 .Where(spell => !spell.Cost.UsesVariantAmount) // omit X mana spells
-                .OrderByDescending(spell => spell.Cmc) // take highest CMC spell
-                .FirstOrDefault();
+                .OrderByDescending(spell => spell.Cmc); // take highest CMC spell
+
+
+            var spell2 = spells.FirstOrDefault();
+
+            return spell2;
         }
 
         private Spell FindVariantManaSpell(AvailableMana availableMana)

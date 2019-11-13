@@ -48,17 +48,19 @@ namespace MtgSimulator.Domain.Cards
 
         public bool IsCastable(AvailableMana availableMana)
         {
-            if(Cmc <= availableMana.TotalAmountOfMana)
+            if(Cmc <= availableMana.AvailableTotalAmountOfMana)
             {
                 // check if mana symbols required to cast this spell plus mana symbols already spent are in eligible mana symbols combination (i.e. you can cast this spell after previously cast spells)
                 var spentManaPlusCostOfThisSpell = Cost.ColorManaSymbols.Concat(availableMana.SpentManaSymbols);
 
-                if (availableMana.AvailableManaSymbols.Any(manaCombination => manaCombination.ContainsAll(spentManaPlusCostOfThisSpell)))
+                if (availableMana.AvailableManaSymbolsCombinations.Any(manaCombination => manaCombination.ContainsAll(spentManaPlusCostOfThisSpell)))
                     return true;
             }
 
             return false;
         }
+
+        public abstract void OnCast();
 
         public void Cast(AvailableMana availableMana)
         {
@@ -72,7 +74,7 @@ namespace MtgSimulator.Domain.Cards
             else
             {
                 // substract CMC from total amount of mana to indicate how much available mana left
-                availableMana.TotalAmountOfMana -= Cmc;
+                availableMana.TotalManaSpent += Cmc;
 
                 foreach (var colormanaSymbol in Cost.ColorManaSymbols)
                 {
@@ -104,6 +106,8 @@ namespace MtgSimulator.Domain.Cards
                 //}
 
             }
+
+            OnCast();
         }
     }
 }

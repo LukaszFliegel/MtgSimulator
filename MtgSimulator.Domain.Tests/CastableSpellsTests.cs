@@ -37,7 +37,7 @@ namespace MtgSimulator.Domain.Tests
             var availableMana = new AvailableMana();
 
             availableMana.TotalAmountOfMana = totalAmountOfMana;
-            availableMana.AvailableManaSymbols.Add(manaSymbols);
+            availableMana.EveryManaSymbolCombination.Add(manaSymbols);
 
             // act & assert            
             card.IsCastable(availableMana).Should().BeTrue();
@@ -65,7 +65,7 @@ namespace MtgSimulator.Domain.Tests
             var availableMana = new AvailableMana();
 
             availableMana.TotalAmountOfMana = totalAmountOfMana;
-            availableMana.AvailableManaSymbols.Add(manaSymbols);
+            availableMana.EveryManaSymbolCombination.Add(manaSymbols);
 
             // act & assert
             card.IsCastable(availableMana).Should().BeFalse();

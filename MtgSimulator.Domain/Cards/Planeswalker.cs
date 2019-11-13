@@ -20,5 +20,11 @@ namespace MtgSimulator.Domain.Cards
         {
             CardZone = CardZone.Battlefield;
         }
+
+        public override void OnCast()
+        {
+            PlayerGameState.HandZone.Cards.Remove(this);
+            OnEntersTheBattlefield();
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace MtgSimulator.Domain.Cards
 
         public virtual void OnEntersTheBattlefield()
         {
-            CardZone = CardZone.Battlefield;
+         
         }
 
         public void Tap()
@@ -56,6 +56,12 @@ namespace MtgSimulator.Domain.Cards
         public bool IsTapped()
         {
             return _tapped;
+        }
+
+        public override void OnCast()
+        {
+            PlayerGameState.HandZone.Cards.Remove(this);
+            PlayerGameState.BattlefieldZone.PutPermanentOnTheBattlefield(this);
         }
     }
 }
